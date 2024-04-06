@@ -6,8 +6,6 @@ from src.api.responses.api_response import ApiResponse
 from src.config.app.config import settings_app
 from src.utils.validator.exceptions import AppValidationException
 
-from src.utils.redis import redis
-
 
 def get_application() -> FastAPI:
     application = FastAPI(
@@ -20,18 +18,6 @@ def get_application() -> FastAPI:
 
 
 app = get_application()
-
-# admin = setup_admin(app, db_manager.engine)
-
-
-@app.on_event("startup")
-async def startup_event():
-    await redis.init_pool()
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    await redis.close_pool()
 
 
 @app.exception_handler(AppValidationException)
