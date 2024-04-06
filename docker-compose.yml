@@ -1,0 +1,91 @@
+version: '3'
+services:
+
+  nginx:
+    image: nginx:alpine
+    container_name: docs_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certbot/www:/var/www/certbot/
+      - ./certbot/conf:/etc/letsencrypt/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - docs
+
+  api:
+    container_name: docs_api
+    restart: unless-stopped
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    volumes:
+      - ./web:/app
+    networks:
+      - docs
+
+  ml:
+    container_name: docs_ml
+    restart: unless-stopped
+    build:
+      context: ./ml
+      dockerfile: Dockerfile
+    volumes:
+      - ./ml:/app
+    networks:
+      - docs
+
+  vue:
+    container_name: docs_vue
+    restart: unless-stopped
+    build:
+      context: ./vue
+      dockerfile: Dockerfile
+    networks:
+      - docs
+
+  postgres:
+    container_name: docs_postgres
+    restart: unless-stopped
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./pgsql/.env
+    volumes:
+      - docs-pgsql-volume:/var/lib/postgresql/data
+    networks:
+      - docs
+
+  redis:
+    image: redis:alpine
+    container_name: docs_redis
+    restart: unless-stopped
+    volumes:
+      - docs-redis-volume:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    expose:
+      - 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - docs
+
+  certbot:
+    image: certbot/certbot
+    container_name: docs_certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot/ --email test@gmail.com -d api.rwfsh39.ru -d rwfsh39.ru --agree-tos --cert-name docs
+
+networks:
+  docs:
+    driver: bridge
+
+volumes:
+  docs-pgsql-volume:
+    driver: local
+  docs-redis-volume:
+    driver: local
