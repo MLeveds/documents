@@ -1,6 +1,6 @@
 from typing import List
 
-from web import APIRouter, Request, Depends
+from api import APIRouter, Request, Depends
 
 from src.api.dependencies.auth import Auth
 from src.api.responses.api_response import ApiResponse

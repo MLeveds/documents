@@ -1,4 +1,4 @@
-from web.responses import JSONResponse
+from api.responses import JSONResponse
 from pydantic import BaseModel
 
 

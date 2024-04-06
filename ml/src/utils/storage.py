@@ -1,4 +1,4 @@
-from web import UploadFile
+from api import UploadFile
 from src.config.app.config import settings_app
 import random
 import string

@@ -1,4 +1,4 @@
-from web import WebSocket, APIRouter, Depends
+from api import WebSocket, APIRouter, Depends
 from src.api.dependencies.auth import Auth
 from src.utils.pubsub import PubSub
 
