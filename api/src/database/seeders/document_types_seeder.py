@@ -2,7 +2,7 @@ from src.database.models.document_type import DocumentType
 from src.database.seeders.generic_seeder import GenericSeeder
 
 
-class PermissionsSeeder(GenericSeeder):
+class DocumentTypeSeeder(GenericSeeder):
     def __init__(self):
         super().__init__()
         self.initial_data = {
