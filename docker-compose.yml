@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./api:/app
-      - ../storage:/storage
+      - ../storage:/app/storage
     networks:
       - docs
 
@@ -35,7 +35,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./ml:/app
-      - ../storage:/storage
+      - ../storage:/app/storage
     networks:
       - docs
 
