@@ -6,7 +6,7 @@ from src.database.models.base import Base
 
 
 # TODO: ADD TO ADMIN
-class User(Base):
+class Document(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
