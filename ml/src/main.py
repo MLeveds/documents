@@ -3,7 +3,6 @@ import uvicorn
 from fastapi import FastAPI
 
 from src.api.responses.api_response import ApiResponse
-from src.api.routers.base import create_app_routers
 from src.config.app.config import settings_app
 from src.utils.validator.exceptions import AppValidationException
 
@@ -16,7 +15,6 @@ def get_application() -> FastAPI:
         debug=settings_app.DEBUG,
         version=settings_app.APP_VERSION
     )
-    application = create_app_routers(application)
 
     return application
 
