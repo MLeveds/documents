@@ -1,7 +1,5 @@
 from sqlalchemy import select
 
-from src.database.models import AdStatus
-
 
 class GenericSeeder:
 
@@ -19,6 +17,6 @@ class GenericSeeder:
                         for attr_name, attr_value in value.items():
                             setattr(model, attr_name, attr_value)
                     else:
-                        model: AdStatus = cls(**value, id=key)
+                        model = cls(**value, id=key)
                     session.add(model)
                     await session.commit()
