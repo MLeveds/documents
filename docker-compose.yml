@@ -19,10 +19,10 @@ services:
     container_name: docs_api
     restart: unless-stopped
     build:
-      context: ./web
+      context: ./api
       dockerfile: Dockerfile
     volumes:
-      - ./web:/app
+      - ./api:/app
       - ../storage:/storage
     networks:
       - docs
