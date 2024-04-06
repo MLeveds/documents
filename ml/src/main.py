@@ -1,6 +1,6 @@
-from api import Request
+from fastapi import Request
 import uvicorn
-from api import FastAPI
+from fastapi import FastAPI
 
 from src.api.responses.api_response import ApiResponse
 from src.api.routers.base import create_app_routers
