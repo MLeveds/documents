@@ -80,7 +80,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot/ --email test@gmail.com -d api.rwfsh39.ru -d rwfsh39.ru --agree-tos --cert-name docs
+    command: certonly --webroot -w /var/www/certbot/ --email test@gmail.com -d ml.rwfsh39.ru -d api.rwfsh39.ru -d rwfsh39.ru --agree-tos --cert-name docs
 
 networks:
   docs:
