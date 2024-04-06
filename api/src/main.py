@@ -7,6 +7,8 @@ from src.config.app.config import settings_app
 from src.utils.validator.exceptions import AppValidationException
 
 from src.utils.redis import redis
+from src.api.routers.documents import router as docs_router
+from src.api.routers.files import router as files_router
 
 
 def get_application() -> FastAPI:
@@ -15,6 +17,9 @@ def get_application() -> FastAPI:
         debug=settings_app.DEBUG,
         version=settings_app.APP_VERSION
     )
+
+    application.include_router(docs_router)
+    application.include_router(files_router)
 
     return application
 

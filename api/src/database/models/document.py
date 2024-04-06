@@ -18,6 +18,7 @@ class Document(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now())
 
     file: Mapped["File"] = relationship(uselist=False, lazy="selectin")
+    type: Mapped["DocumentType"] = relationship(uselist=False, lazy="selectin")
 
     @property
     def link(self):

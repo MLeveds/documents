@@ -18,10 +18,10 @@ class File(Base):
 
     @property
     def link(self):
-        return settings_app.APP_URL + '/files/' + self.path
+        return settings_app.APP_URL + '/files/' + self.path + self.extension
 
     @property
     def edited_link(self):
         if os.path.isfile(settings_app.APP_PATH + '/storage/' + self.path):
-            return settings_app.APP_URL + '/files/' + self.path + '_edited'
+            return settings_app.APP_URL + '/files/' + self.path + '_edited' + self.extension
         return None

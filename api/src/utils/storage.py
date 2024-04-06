@@ -9,8 +9,8 @@ import base64
 class Storage:
     def save(self, file: UploadFile, disk: str):
         file_ext = file.filename.split('.')[-1]
-        filename = self.get_filename(file_ext)
-        path_to_save = self.get_path(disk, filename)
+        filename = self.get_filename()
+        path_to_save = self.get_path(disk, filename + file_ext)
 
         with open(path_to_save, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
@@ -27,8 +27,8 @@ class Storage:
 
         file_data = base64.b64decode(image)
         file_ext = self.get_ext_by_mime(mime)
-        filename = self.get_filename(file_ext)
-        path_to_save = self.get_path(disk, filename)
+        filename = self.get_filename()
+        path_to_save = self.get_path(disk, filename + file_ext)
 
         with open(path_to_save, "wb") as f:
             f.write(file_data)
@@ -36,11 +36,11 @@ class Storage:
         return filename, file_ext
 
     def get_path(self, disk, file_name):
-        return settings_app.APP_PATH + '/storage/' + disk + '/' + file_name
+        return settings_app.APP_PATH + '/storage/' + file_name
 
-    def get_filename(self, file_ext: str):
+    def get_filename(self):
         characters = string.ascii_letters + string.digits
-        return ''.join(random.choice(characters) for _ in range(30)) + '.' + file_ext
+        return ''.join(random.choice(characters) for _ in range(30))
 
     def get_ext_by_mime(self, mime: str):
         mime_extensions = {

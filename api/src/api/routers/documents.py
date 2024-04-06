@@ -1,0 +1,39 @@
+from typing import List
+
+from fastapi import APIRouter
+from src.api.responses.api_response import ApiResponse
+from src.api.transformers.document_transformer import DocumentTransformer
+
+from src.database.models.document import Document
+from src.database.session_manager import db_manager
+from src.utils.transformer import transform
+from sqlalchemy.future import select
+from sqlalchemy.orm import joinedload
+
+import aiohttp
+import asyncio
+
+router = APIRouter(prefix="/documents")
+
+
+@router.get("/")
+async def index():
+    async with db_manager.get_session() as session:
+        q = select(Document) \
+            .options(joinedload(Document.type).joinedload(Document.file))
+        res = await session.execute(q)
+        documents: List[Document] = res.unique().scalars().all()
+
+    return ApiResponse.payload(transform(
+        documents,
+        DocumentTransformer()
+    ))
+
+
+@router.post("/")
+async def index():
+    async with aiohttp.ClientSession() as session:
+        async with session.get('http://docs_ml/predict') as response:
+            res = await response.json()
+
+    return res

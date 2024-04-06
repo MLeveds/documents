@@ -6,6 +6,8 @@ from src.api.responses.api_response import ApiResponse
 from src.config.app.config import settings_app
 from src.utils.validator.exceptions import AppValidationException
 
+from src.api.routers.predictions import router as predictions_router
+
 
 def get_application() -> FastAPI:
     application = FastAPI(
@@ -13,6 +15,8 @@ def get_application() -> FastAPI:
         debug=settings_app.DEBUG,
         version=settings_app.APP_VERSION
     )
+
+    application.include_router(predictions_router)
 
     return application
 
