@@ -26,7 +26,6 @@ async def predict(request: Request):
 
     from fastapi.responses import FileResponse
     image_path = settings_app.APP_PATH + '/storage/' + file.path + file.extension
-    return settings_app.APP_PATH + '/storage/' + file.path + file.extension
     return FileResponse(image_path)
 
 
