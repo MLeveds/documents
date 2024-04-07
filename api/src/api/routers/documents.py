@@ -47,12 +47,12 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
     filename, extension = storage.save(image)
 
     async with db_manager.get_session() as session:
-        image = File(path=filename, extension=extension)
-        await session.add(image)
-        await session.refresh(image)
+        file = File(path=filename, extension=extension)
+        await session.add(file)
+        await session.refresh(file)
         document = Document(
             type_id=None,
-            file_id=image.id,
+            file_id=file.id,
             status_id=DocumentStatus.CREATED,
             page=None,
             data=None,
