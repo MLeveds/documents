@@ -4,6 +4,6 @@ from src.api.responses.api_response import ApiResponse
 router = APIRouter()
 
 
-@router.get("/predict")
+@router.post("/predict")
 async def predict(request: Request):
     return ApiResponse.payload({'message': 'hellow'})
