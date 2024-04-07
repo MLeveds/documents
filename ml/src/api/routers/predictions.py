@@ -14,7 +14,7 @@ router = APIRouter()
 async def predict(request: Request):
     data = await request.json()
     if 'image_id' not in data:
-        return ApiResponse.error('image must be present.')
+        return ApiResponse.error('image_id must be present.')
 
     async with db_manager.get_session() as session:
         q = select(File).where(File.id == data['image_id'])
@@ -25,7 +25,7 @@ async def predict(request: Request):
         return ApiResponse.error('Image does not exist', 404)
 
     from fastapi.responses import FileResponse
-    image_path = settings_app.APP_PATH + '/storage/' + file.path
+    image_path = settings_app.APP_PATH + '/storage/' + file.path + file.extension
     return FileResponse(image_path)
 
 
