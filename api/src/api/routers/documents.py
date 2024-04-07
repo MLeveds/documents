@@ -32,11 +32,11 @@ async def index():
 
 @router.post("")
 async def store(request: Request, image: UploadFile = File(...)):
-    import json
+    data = await request.form()
     return {
-        'type': str(type(request.values())),
-        'len': len(request.values()),
-        'vals': json.dumps(dict(request.values())),
+        'type': str(type(data)),
+        'len': len(data),
+        'vals': data,
     }
     return request.values()
     return {'filename': image.filename, 'data': request.values()}
