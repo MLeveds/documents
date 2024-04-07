@@ -11,7 +11,9 @@ class DocumentTransformer(BaseTransformer):
         return {
             "id": document.id,
             "type_id": document.type_id,
-            "type": document.type.name,
+            "type": document.type.name if document.type else None,
+            "status_id": document.status_id,
+            "status": document.status.name,
             "file_id": document.file_id,
             "page": document.page,
             "data": document.data,

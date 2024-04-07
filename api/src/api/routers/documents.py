@@ -25,6 +25,7 @@ async def index():
     async with db_manager.get_session() as session:
         q = select(Document) \
             .options(joinedload(Document.type)) \
+            .options(joinedload(Document.status)) \
             .options(joinedload(Document.file))
         res = await session.execute(q)
         documents: List[Document] = res.unique().scalars().all()
