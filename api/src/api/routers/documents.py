@@ -71,7 +71,7 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
     async def send_to_ml(document: Document):
         async with aiohttp.ClientSession() as client:
             try:
-                async with client.post('http://docs_ml:8000/predict', data={
+                async with client.post('http://docs_ml:8000/predict', json={
                     'image_id': document.file_id,
                 }) as response:
                     data = await response.json()
