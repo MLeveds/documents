@@ -15,7 +15,7 @@ import aiohttp
 router = APIRouter(prefix="/documents")
 
 
-@router.get("/")
+@router.get("")
 async def index():
     async with db_manager.get_session() as session:
         q = select(Document) \
@@ -30,7 +30,7 @@ async def index():
     ))
 
 
-@router.post("/")
+@router.post("")
 async def store():
     async with aiohttp.ClientSession() as session:
         async with session.get('http://docs_ml/predict') as response:
