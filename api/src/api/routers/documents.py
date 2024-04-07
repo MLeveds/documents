@@ -10,7 +10,7 @@ from src.database.models.file import File
 from src.database.session_manager import db_manager
 from src.utils.transformer import transform
 from sqlalchemy.future import select
-from sqlalchemy import update
+from sqlalchemy import update, desc
 from sqlalchemy.orm import joinedload
 
 from src.utils.storage import storage
@@ -27,7 +27,8 @@ async def index():
         q = select(Document) \
             .options(joinedload(Document.type)) \
             .options(joinedload(Document.status)) \
-            .options(joinedload(Document.file))
+            .options(joinedload(Document.file)) \
+            .order_by(desc(Document.created_at))
         res = await session.execute(q)
         documents: List[Document] = res.unique().scalars().all()
 
