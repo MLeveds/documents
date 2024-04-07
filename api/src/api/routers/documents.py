@@ -32,7 +32,12 @@ async def index():
 
 @router.post("")
 async def store(request: Request, image: UploadFile = File(...)):
-
+    return {
+        'type': str(type(request.values())),
+        'len': len(request.values()),
+        'vals': request.values(),
+    }
+    return request.values()
     return {'filename': image.filename, 'data': request.values()}
     async with aiohttp.ClientSession() as session:
         async with session.post('http://docs_ml:8000/predict') as response:
