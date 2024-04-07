@@ -76,13 +76,13 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
                 status_id = DocumentStatus.FAILED
 
             async with db_manager.get_session() as session:
-                q = update(Document).filter(Document.id == document.id).update({'status_id': status_id})
+                q = update(Document).filter(Document.id == document.id).values({'status_id': status_id})
                 await session.execute(q)
 
     queue.add_task(send_to_ml, document)
 
     async with db_manager.get_session() as session:
-        q = update(Document).filter(Document.id == document.id).update({'status_id': DocumentStatus.WAIT})
+        q = update(Document).filter(Document.id == document.id).values({'status_id': DocumentStatus.WAIT})
         await session.execute(q)
 
     return ApiResponse.success('Document is sent to processing.')
