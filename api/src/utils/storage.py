@@ -7,17 +7,17 @@ import base64
 
 
 class Storage:
-    def save(self, file: UploadFile, disk: str):
+    def save(self, file: UploadFile):
         file_ext = file.filename.split('.')[-1]
         filename = self.get_filename()
-        path_to_save = self.get_path(disk, filename + file_ext)
+        path_to_save = self.get_path(filename + file_ext)
 
         with open(path_to_save, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        return filename
+        return filename, file_ext
 
-    def save_from_base64(self, image: str, disk: str):
+    def save_from_base64(self, image: str):
         # meta = data:image/jpeg;base64
         try:
             meta, image = image.split(',')
@@ -28,14 +28,14 @@ class Storage:
         file_data = base64.b64decode(image)
         file_ext = self.get_ext_by_mime(mime)
         filename = self.get_filename()
-        path_to_save = self.get_path(disk, filename + file_ext)
+        path_to_save = self.get_path(filename + file_ext)
 
         with open(path_to_save, "wb") as f:
             f.write(file_data)
 
         return filename, file_ext
 
-    def get_path(self, disk, file_name):
+    def get_path(self, file_name):
         return settings_app.APP_PATH + '/storage/' + file_name
 
     def get_filename(self):

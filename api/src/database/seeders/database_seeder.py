@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.seeders.generic_seeder import GenericSeeder
 from src.database.seeders.document_types_seeder import DocumentTypeSeeder
+from src.database.seeders.document_statuses_seeder import DocumentStatusSeeder
 from src.database.session_manager import db_manager
 
 
@@ -14,6 +15,7 @@ class DatabaseSeeder:
         self.session_factory: AsyncSession = db_manager.session_factory
         self.seeders: List[Any[GenericSeeder]] = [
             DocumentTypeSeeder,
+            DocumentStatusSeeder,
         ]
 
     async def run(self):
