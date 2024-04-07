@@ -48,6 +48,8 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
 
     async with db_manager.get_session() as session:
         file = File(path=filename, extension=extension)
+        session.begin()
+
         session.add(file)
         await session.refresh(file)
         document = Document(
@@ -57,6 +59,7 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
             page=None,
             data=None,
         )
+
         session.add(document)
         await session.refresh(document)
 
