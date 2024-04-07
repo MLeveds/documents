@@ -15,6 +15,7 @@ from sqlalchemy.orm import joinedload
 
 from src.utils.storage import storage
 
+import json
 import aiohttp
 
 router = APIRouter(prefix="/documents")
@@ -73,15 +74,28 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
                 async with client.post('http://docs_ml:8000/predict', data={
                     'image_id': document.file_id,
                 }) as response:
-                    res = await response.json()
-                    status_id = DocumentStatus.PROCESSED
-            except aiohttp.ClientConnectorError:
-                status_id = DocumentStatus.FAILED
+                    data = await response.json()
 
-            async with db_manager.get_session() as session:
-                q = update(Document).filter(Document.id == document.id).values(status_id=status_id)
-                await session.execute(q)
-                await session.commit()
+                    async with db_manager.get_session() as session:
+                        q = update(Document)\
+                            .filter(Document.id == document.id)\
+                            .values(
+                            status_id=DocumentStatus.PROCESSED,
+                            data=json.dumps(data['data']) if 'data' in data else None,
+                            type_id=data['file_type_id'] if 'file_type_id' in data else None,
+                            page=data['page'] if 'page' in data else None,
+                        )
+                        await session.execute(q)
+                        await session.commit()
+            except:
+                async with db_manager.get_session() as session:
+                    q = update(Document)\
+                        .filter(Document.id == document.id)\
+                        .values(status_id=DocumentStatus.FAILED)
+                    await session.execute(q)
+                    await session.commit()
+
+
 
     queue.add_task(send_to_ml, document)
 

@@ -5,6 +5,7 @@ from src.database.session_manager import db_manager
 from sqlalchemy.future import select
 
 from src.database.models.file import File
+from src.database.models.document_type import DocumentType
 from src.config.app.config import settings_app
 
 router = APIRouter()
@@ -24,9 +25,22 @@ async def predict(request: Request):
     if not file:
         return ApiResponse.error('Image does not exist', 404)
 
-    from fastapi.responses import FileResponse
+    """Путь к картинке"""
     image_path = settings_app.APP_PATH + '/storage/' + file.path + file.extension
-    return FileResponse(image_path)
 
+    """Всякое с предсказаниями..."""
 
-    return ApiResponse.payload({'message': 'hellow'})
+    """Отредактированную фотку (с выделенными полями) нужно будет сохранить с этим именем"""
+    image_edited_path = settings_app.APP_PATH + '/storage/' + file.path + '_edited' + file.extension
+
+    """"""
+    response_data = {
+        'file_type_id': DocumentType.PASSPORT_RU,  # enum с id типа файла
+        'data': {  # поля прочитанные с картинки, произвольные названия, надо будет посмотреть, какие поля вы достаете, я потом у себя их обозначу, чтобы правильно выводиить
+            'series': '0808',
+            'number': '123321',
+        },
+        'page': 1,  # Страница документа
+    }
+
+    return ApiResponse.payload(response_data)
