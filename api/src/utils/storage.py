@@ -8,7 +8,7 @@ import base64
 
 class Storage:
     def save(self, file: UploadFile):
-        file_ext = file.filename.split('.')[-1]
+        file_ext = '.' + file.filename.split('.')[-1]
         filename = self.get_filename()
         path_to_save = self.get_path(filename + file_ext)
 
