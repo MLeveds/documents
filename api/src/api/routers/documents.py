@@ -36,7 +36,7 @@ async def store(request: Request, image: UploadFile = File(...)):
     return {
         'type': str(type(request.values())),
         'len': len(request.values()),
-        'vals': json.dumps(request.values()),
+        'vals': json.dumps(dict(request.values())),
     }
     return request.values()
     return {'filename': image.filename, 'data': request.values()}
