@@ -11,7 +11,6 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 
 import aiohttp
-import asyncio
 
 router = APIRouter(prefix="/documents")
 
@@ -20,7 +19,8 @@ router = APIRouter(prefix="/documents")
 async def index():
     async with db_manager.get_session() as session:
         q = select(Document) \
-            .options(joinedload(Document.type).joinedload(Document.file))
+            .options(joinedload(Document.type)) \
+            .options(joinedload(Document.file))
         res = await session.execute(q)
         documents: List[Document] = res.unique().scalars().all()
 
