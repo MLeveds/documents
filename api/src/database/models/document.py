@@ -8,7 +8,7 @@ from src.database.models.document_status import DocumentStatus
 
 # TODO: ADD TO ADMIN
 class Document(Base):
-    __tablename__ = "users"
+    __tablename__ = "documents"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
     type_id: Mapped[int] = mapped_column(ForeignKey("document_types.id"), nullable=True)
