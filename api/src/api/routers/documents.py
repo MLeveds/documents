@@ -31,7 +31,7 @@ async def index():
 
 
 @router.post("/")
-async def index():
+async def store():
     async with aiohttp.ClientSession() as session:
         async with session.get('http://docs_ml/predict') as response:
             res = await response.json()
