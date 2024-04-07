@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, UploadFile, File
 from src.api.responses.api_response import ApiResponse
 from src.api.transformers.document_transformer import DocumentTransformer
 
@@ -31,10 +31,17 @@ async def index():
 
 
 @router.post("")
-async def store():
+async def store(request: Request, image: UploadFile = File(...)):
+
+    return {'filename': image.filename, 'data': request.values()}
     async with aiohttp.ClientSession() as session:
         async with session.post('http://docs_ml:8000/predict') as response:
         # async with session.post('https://ml.rwfsh39.ru/predict') as response:
             res = await response.json()
 
     return res
+
+
+@router.post('/callback')
+async def callback():
+    pass
