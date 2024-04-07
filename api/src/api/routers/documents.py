@@ -9,7 +9,8 @@ from src.database.models.document_status import DocumentStatus
 from src.database.models.file import File
 from src.database.session_manager import db_manager
 from src.utils.transformer import transform
-from sqlalchemy.future import select, update
+from sqlalchemy.future import select
+from sqlalchemy import update
 from sqlalchemy.orm import joinedload
 
 from src.utils.storage import storage
