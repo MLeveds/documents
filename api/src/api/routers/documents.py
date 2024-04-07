@@ -48,9 +48,9 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
 
     async with db_manager.get_session() as session:
         file = File(path=filename, extension=extension)
-        session.begin()
 
         session.add(file)
+        await session.commit()
         await session.refresh(file)
         document = Document(
             type_id=None,
@@ -61,6 +61,7 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
         )
 
         session.add(document)
+        await session.commit()
         await session.refresh(document)
 
         await session.commit()
