@@ -61,6 +61,7 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
             status_id=DocumentStatus.CREATED,
             page=None,
             data=None,
+            created_at=datetime.datetime.now()
         )
 
         session.add(document)

@@ -1,6 +1,6 @@
 <template>
     <header class="header">
-        <span class="header__logo">Documento</span>
+        <span class="header__logo"><b>Documento</b></span>
     </header>
     <div class="main">
         <div class="main__documents-list">
@@ -20,14 +20,17 @@
                 </div>
             </label>
             <input @change="previewFile" type="file" name="photo" id="upload-photo" style="display:none;"/>
-            <div @click="selectDocument(document)" v-for="document in documents" class="main__documents-list-item">
-                <span style="width:5%; padding-left: 5%">{{ document['id'] }}</span>
-                <div style="width: 5%; padding-left: 5%">
-                    <img style="max-height: 40px" :src="document['link']" alt="">
+
+            <transition-group name="fade" mode="out-in">
+                <div @click="selectDocument(document)" v-for="document in documents" :key="document.id" class="main__documents-list-item">
+                    <span style="width:5%; padding-left: 5%">{{ document['id'] }}</span>
+                    <div style="width: 5%; padding-left: 5%">
+                        <img style="max-height: 40px" :src="document['link']" alt="">
+                    </div>
+                    <span style="width:10%; padding-left: 20%">{{ document['status'] }}</span>
+                    <span style="width: 30%; padding-left: 20%">{{ formatDate(document['created_at']) }}</span>
                 </div>
-                <span style="width:25%; padding-left: 5%">{{ document['status'] }}</span>
-                <span style="width: 30%; padding-left: 20%">{{ formatDate(document['created_at']) }}</span>
-            </div>
+            </transition-group>
         </div>
         <div class="main__documents-view">
             <template v-if="document">
@@ -243,5 +246,28 @@ export default {
 }
 .header__logo {
     padding-left: 10px;
+}
+
+
+.fade-enter {
+    opacity:0;
+}
+
+.fade-enter-active{
+    animation: fadein 1s;
+}
+
+.fade-leave {
+    opacity:1;
+}
+
+.fade-leave-active {
+    animation: fadein 1s reverse;
+}
+
+
+@keyframes fadein {
+    from {opacity: 0;}
+    to   {opacity: 1;}
 }
 </style>
