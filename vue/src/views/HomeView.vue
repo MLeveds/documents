@@ -4,9 +4,22 @@
     </header>
     <div class="main">
         <div class="main__documents-list">
-            <div class="main__documents-list__upload">
-                <span>Upload photo</span>
-            </div>
+            <label for="upload-photo">
+                <div class="main__documents-list__upload">
+                    <span v-if="!file">Нажмите для загрузки фото, или перетащите файл</span>
+                    <template v-else>
+                        <div class="upload_preview-image-container">
+                            <img ref="preview-img" src="" alt="">
+                        </div>
+                        <div class="upload_preview-button-container">
+                            <app-button @click="upload">
+                                Загрузить
+                            </app-button>
+                        </div>
+                    </template>
+                </div>
+            </label>
+            <input @change="previewFile" type="file" name="photo" id="upload-photo" style="display:none;"/>
             <div @click="selectDocument(document)" v-for="document in documents" class="main__documents-list-item">
                 <span style="width:5%; padding-left: 5%">{{ document['id'] }}</span>
                 <div style="width: 5%; padding-left: 5%">
@@ -35,7 +48,7 @@
                 </div>
             </template>
             <div v-else class="main__documents-view__message">
-                <span>Select the document for preview</span>
+                <span>Выберите документ для просмотра</span>
             </div>
         </div>
     </div>
@@ -43,13 +56,21 @@
 
 <script>
 import axios from "axios";
+import AppButton from "@/components/gui/AppButton.vue";
 
 export default {
+    components: {AppButton},
     data: () => ({
         documents: [],
         document: null, // todo show
         loading: true, // todo spin
+        file: null,
     }),
+    computed: {
+        uploadBlockHeight() {
+            return this.file ? '200px' : '50px'
+        },
+    },
     mounted() {
         this.getDocuments()
     },
@@ -62,8 +83,25 @@ export default {
         selectDocument(document) {
             this.document = document
         },
+        previewFile(e) {
+            this.file = e.target.files[0]
+            if (this.file) {
+                this.$nextTick(() => {
+                    this.$refs["preview-img"].src = URL.createObjectURL(this.file)
+                })
+            }
+        },
         upload() {
-            // todo upload
+            let data = new FormData()
+            data.append('image', this.file)
+            axios.post('/documents', {headers: {'Content-Type': 'multipart/form-data'}})
+            .then(() => {
+                this.file = null
+                this.getDocuments()
+            })
+            .catch(() => {
+
+            })
         },
         formatDate(date) {
             date  = new Date(Date.parse(date))
@@ -76,8 +114,8 @@ export default {
         },
         translate(key) {
             let fields = {
-                'series': 'series',
-                'number': 'number',
+                'series': 'Серия',
+                'number': 'Номер',
             }
             if (key in fields) {
                 return fields[key]
@@ -94,7 +132,7 @@ export default {
     align-content: flex-start;
     align-items: center;
     width: 100%;
-    height: 7vh;
+    min-height: 3rem;
     background-color: var(--purple);
 }
 .main {
@@ -103,7 +141,8 @@ export default {
     min-height: 93vh;
 }
 .main__documents-list {
-    width: 40%;
+    min-width: 38%;
+    max-width: 38%;
     border-radius: 50px;
     margin: 10px 10px 10px 10px;
     padding-bottom: 10px;
@@ -130,18 +169,42 @@ export default {
 }
 .main__documents-list__upload {
     box-sizing: border-box;
-    width: 90%;
+    width: 100%;
     margin-top: 10px;
-    height: 50px;
+    /*height: 50px;*/
+    height: v-bind('uploadBlockHeight');
+    transition: height 0.7s;
     border-radius: 50px;
     background-color: var(--white);
     background-clip: content-box;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+}
+.upload_preview-image-container {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.upload_preview-image-container img {
+    max-height: 190px;
+    max-width: 100%;
+}
+.upload_preview-button-container {
+    width:30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main__documents-list label {
+    cursor: pointer;
+    width: 90%;
 }
 .main__documents-view {
-    width: 60%;
+    min-width: 60%;
+    max-width: 60%;
     max-height: 75vh;
     border-radius: 50px;
     margin: 10px 10px 10px 0;
@@ -149,7 +212,6 @@ export default {
     box-shadow: 5px 5px 10px var(--blue);
     position: relative;
     display: flex;
-
 }
 .main__documents-view__message {
     position: absolute;
@@ -173,6 +235,11 @@ export default {
     width: 50%;
     display: flex;
     flex-direction: column;
+    top: 33%;
+    position: relative;
+}
+.main__documents-view__data span {
+    margin-top: 0.5rem;
 }
 .header__logo {
     padding-left: 10px;

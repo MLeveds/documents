@@ -22,5 +22,4 @@ html, body {
     font-family: Sans-Serif,serif;
     background-color: var(--white);
 }
-/*var(--blue)*/
 </style>
