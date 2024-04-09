@@ -94,7 +94,7 @@ export default {
         upload() {
             let data = new FormData()
             data.append('image', this.file)
-            axios.post('/documents', {headers: {'Content-Type': 'multipart/form-data'}})
+            axios.post('/documents', data, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(() => {
                 this.file = null
                 this.getDocuments()
