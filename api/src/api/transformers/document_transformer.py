@@ -17,7 +17,7 @@ class DocumentTransformer(BaseTransformer):
             "status": document.status.name,
             "file_id": document.file_id,
             "page": document.page,
-            "data": json.loads(document.data),
+            "data": json.loads(document.data) if document.data else None,
             "link": document.link,
             "edited_link": document.edited_link,
             "created_at": document.created_at.isoformat(),
