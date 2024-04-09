@@ -28,7 +28,13 @@
             <input @change="previewFile" type="file" name="photo" id="upload-photo" style="display:none;"/>
 
             <transition-group name="fade" mode="out-in">
-                <div @click="selectDocument(document)" v-for="document in documents" :key="document.id" class="main__documents-list-item">
+                <div
+                    @click="selectDocument(document)"
+                    v-for="document in documents"
+                    :key="document.id"
+                    :style="selectedDocument && document.id === selectedDocument.id ? {'background-color': 'var(--purple)'} : {'background-color': 'var(--white)'}"
+                    class="main__documents-list-item"
+                >
                     <span style="width:5%; padding-left: 5%">{{ document['id'] }}</span>
                     <div style="width: 5%; padding-left: 5%">
                         <img style="max-height: 40px" :src="document['link']" alt="">
@@ -39,19 +45,19 @@
             </transition-group>
         </div>
         <div class="main__documents-view">
-            <template v-if="document">
+            <template v-if="selectedDocument">
                 <div class="main__documents-view__images">
-                    <img class="main__documents-view__images__image" :src="document['link']" alt="">
-                    <img v-if="document['edited_link']" class="main__documents-view__images__image" :src="document['edited_link']" alt="">
+                    <img class="main__documents-view__images__image" :src="selectedDocument['link']" alt="">
+                    <img v-if="selectedDocument['edited_link']" class="main__documents-view__images__image" :src="selectedDocument['edited_link']" alt="">
                 </div>
                 <div class="main__documents-view__data">
-                    <span><b>Статус: </b>{{ document['status'] }}</span>
-                    <span><b>Тип документа: </b>{{ document['type'] ?? 'Не определен' }}</span>
-                    <span><b>Страница: </b>{{ document['page'] === null ? 'Не определена' : document['page'] }}</span>
-                    <span v-if="!document['data']"><b>Данные: </b>Не определены</span>
+                    <span><b>Статус: </b>{{ selectedDocument['status'] }}</span>
+                    <span><b>Тип документа: </b>{{ selectedDocument['type'] ?? 'Не определен' }}</span>
+                    <span><b>Страница: </b>{{ selectedDocument['page'] === null ? 'Не определена' : selectedDocument['page'] }}</span>
+                    <span v-if="!selectedDocument['data']"><b>Данные: </b>Не определены</span>
                     <template v-else>
-                        <span v-for="field in Object.keys(document['data'])">
-                            <b>{{translate(field)}}: </b> {{ document['data'][field] }}
+                        <span v-for="field in Object.keys(selectedDocument['data'])">
+                            <b>{{translate(field)}}: </b> {{ selectedDocument['data'][field] }}
                         </span>
                     </template>
                 </div>
@@ -71,7 +77,7 @@ export default {
     components: {AppButton},
     data: () => ({
         documents: [],
-        document: null, // todo show
+        selectedDocument: null, // todo show
         loading: true, // todo spin
         file: null,
         dragoverActive: false,
@@ -91,7 +97,7 @@ export default {
             })
         },
         selectDocument(document) {
-            this.document = document
+            this.selectedDocument = document
         },
         previewFile(e) {
             if (e.type === 'change') {
@@ -176,7 +182,6 @@ export default {
     margin-top: 10px;
     height: 50px;
     border-radius: 50px;
-    background-color: var(--white);
     background-clip: content-box;
     display: flex;
     align-items: center;
@@ -186,7 +191,6 @@ export default {
     box-sizing: border-box;
     width: 100%;
     margin-top: 10px;
-    /*height: 50px;*/
     height: v-bind('uploadBlockHeight');
     transition: height 0.7s;
     border-radius: 50px;
