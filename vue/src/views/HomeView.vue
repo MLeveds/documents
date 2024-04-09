@@ -5,7 +5,13 @@
     <div class="main">
         <div class="main__documents-list">
             <label for="upload-photo">
-                <div class="main__documents-list__upload">
+                <div
+                    @drop.prevent="previewFile"
+                    @dragenter.prevent="dragoverActive = true"
+                    @dragover.prevent="dragoverActive = true"
+                    @dragleave.prevent="dragoverActive = false"
+                    class="main__documents-list__upload"
+                >
                     <span v-if="!file">Нажмите для загрузки фото, или перетащите файл</span>
                     <template v-else>
                         <div class="upload_preview-image-container">
@@ -68,10 +74,11 @@ export default {
         document: null, // todo show
         loading: true, // todo spin
         file: null,
+        dragoverActive: false,
     }),
     computed: {
         uploadBlockHeight() {
-            return this.file ? '200px' : '50px'
+            return this.file || this.dragoverActive ? '200px' : '50px'
         },
     },
     mounted() {
@@ -87,7 +94,11 @@ export default {
             this.document = document
         },
         previewFile(e) {
-            this.file = e.target.files[0]
+            if (e.type === 'change') {
+                this.file = e.target.files[0]
+            } else if (e.type === 'drop') {
+                this.file = e.dataTransfer.items[0].getAsFile()
+            }
             if (this.file) {
                 this.$nextTick(() => {
                     this.$refs["preview-img"].src = URL.createObjectURL(this.file)
@@ -100,6 +111,7 @@ export default {
             axios.post('/documents', data, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(() => {
                 this.file = null
+                this.dragoverActive = false
                 this.getDocuments()
             })
             .catch(() => {
@@ -141,7 +153,7 @@ export default {
 .main {
     display:flex;
     width: 100%;
-    min-height: 93vh;
+    min-height: 90vh;
 }
 .main__documents-list {
     min-width: 38%;
@@ -224,7 +236,7 @@ export default {
 }
 .main__documents-view__images {
     height: 100%;
-    width: 50%;
+    width: 60%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -235,7 +247,7 @@ export default {
 }
 .main__documents-view__data {
     height: 100%;
-    width: 50%;
+    width: 40%;
     display: flex;
     flex-direction: column;
     top: 33%;
