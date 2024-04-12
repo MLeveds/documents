@@ -1,6 +1,6 @@
 <template>
     <header class="header">
-        <span class="header__logo"><b>Documento</b></span>
+        <span class="header__logo"><b>Documentos</b></span>
     </header>
     <div class="main">
         <div class="main__documents-list">
