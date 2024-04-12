@@ -159,9 +159,9 @@ export default {
 .main {
     display:flex;
     width: 100%;
-    min-height: 90vh;
     @media (min-width: 990px) {
         flex-direction: row;
+        min-height: 90vh;
     }
     @media (max-width: 990px) {
         flex-direction: column-reverse;
