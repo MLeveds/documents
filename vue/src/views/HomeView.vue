@@ -4,27 +4,6 @@
     </header>
     <div class="main">
         <div class="main__documents-list">
-<!--            <div-->
-<!--                @drop.prevent="previewFile"-->
-<!--                @dragenter.prevent="dragoverActive = true"-->
-<!--                @dragover.prevent="dragoverActive = true"-->
-<!--                @dragleave.prevent="dragoverActive = false"-->
-<!--                class="main__documents-list__upload"-->
-<!--            >-->
-<!--                <label @click.prevent for="upload-photo">-->
-<!--                    <span @click="openInput" v-if="!file">Нажмите для загрузки фото, или перетащите файл</span>-->
-<!--                    <template v-else>-->
-<!--                        <div @click="openInput" class="upload_preview-image-container">-->
-<!--                            <img ref="preview-img" src="" alt="">-->
-<!--                        </div>-->
-<!--                    </template>-->
-<!--                </label>-->
-<!--            </div>-->
-<!--            <div v-if="file" class="upload_preview-button-container">-->
-<!--                <app-button @click="upload">-->
-<!--                    Загрузить-->
-<!--                </app-button>-->
-<!--            </div>-->
             <label @click.prevent for="upload-photo">
                 <div
                     @drop.prevent="previewFile"
@@ -46,7 +25,8 @@
                     </template>
                 </div>
             </label>
-            <input @change="previewFile" ref="upload" type="file" accept=".gif,.jpg,.jpeg,.png" name="photo" id="upload-photo" style="display:none;"/>
+<!--            <input @change="previewFile" ref="upload" type="file" accept=".gif,.jpg,.jpeg,.png" name="photo" id="upload-photo" style="display:none;"/>-->
+            <input @change="previewFile" ref="upload" type="file" accept=".gif,.jpg,.jpeg,.png" name="photo" id="upload-photo"/>
 
             <transition-group name="fade" mode="out-in">
                 <div
@@ -141,7 +121,6 @@ export default {
             }
         },
         upload() {
-            alert('haha')
             let data = new FormData()
             data.append('image', this.file)
             axios.post('/documents', data, {headers: {'Content-Type': 'multipart/form-data'}})
