@@ -1,10 +1,10 @@
 <template>
     <header class="header">
-        <span class="header__logo"><b>Documentos</b></span>
+        <span class="header__logo"><b>Documento</b></span>
     </header>
     <div class="main">
         <div class="main__documents-list">
-            <label for="upload-photo">
+            <label @click.prevent for="upload-photo">
                 <div
                     @drop.prevent="previewFile"
                     @dragenter.prevent="dragoverActive = true"
@@ -12,9 +12,9 @@
                     @dragleave.prevent="dragoverActive = false"
                     class="main__documents-list__upload"
                 >
-                    <span v-if="!file">Нажмите для загрузки фото, или перетащите файл</span>
+                    <span @click="openInput" v-if="!file">Нажмите для загрузки фото, или перетащите файл</span>
                     <template v-else>
-                        <div class="upload_preview-image-container">
+                        <div @click="openInput" class="upload_preview-image-container">
                             <img ref="preview-img" src="" alt="">
                         </div>
                         <div class="upload_preview-button-container">
@@ -25,7 +25,7 @@
                     </template>
                 </div>
             </label>
-            <input @change="previewFile" type="file" name="photo" id="upload-photo" style="display:none;"/>
+            <input @change="previewFile" ref="upload" type="file" name="photo" id="upload-photo" style="display:none;"/>
 
             <transition-group name="fade" mode="out-in">
                 <div
@@ -35,12 +35,12 @@
                     :style="selectedDocument && document.id === selectedDocument.id ? {'background-color': 'var(--purple)'} : {'background-color': 'var(--white)'}"
                     class="main__documents-list-item"
                 >
-                    <span style="width:5%; padding-left: 5%">{{ document['id'] }}</span>
-                    <div style="width: 5%; padding-left: 5%">
+                    <span class="main__documents-list-item__id">{{ document['id'] }}</span>
+                    <div class="main__documents-list-item__image">
                         <img style="max-height: 40px" :src="document['link']" alt="">
                     </div>
-                    <span style="width:10%; padding-left: 20%">{{ document['status'] }}</span>
-                    <span style="width: 30%; padding-left: 20%">{{ formatDate(document['created_at']) }}</span>
+                    <span class="main__documents-list-item__status">{{ document['status'] }}</span>
+                    <span class="main__documents-list-item__date">{{ formatDate(document['created_at']) }}</span>
                 </div>
             </transition-group>
         </div>
@@ -86,6 +86,9 @@ export default {
         uploadBlockHeight() {
             return this.file || this.dragoverActive ? '200px' : '50px'
         },
+        imageHeight() {
+            return this.selectedDocument && this.selectedDocument['edited_link'] ? '40%' : '90%'
+        },
     },
     mounted() {
         this.getDocuments()
@@ -98,6 +101,11 @@ export default {
         },
         selectDocument(document) {
             this.selectedDocument = document
+        },
+        openInput() {
+            this.$nextTick(() => {
+                this.$refs.upload.click()
+            })
         },
         previewFile(e) {
             if (e.type === 'change') {
@@ -200,6 +208,27 @@ export default {
     align-items: center;
     cursor: pointer;
 }
+.main__documents-list-item__id {
+    width:10%;display: flex; align-items: center; justify-content: center;
+}
+.main__documents-list-item__image {
+    display: flex; align-items: center; justify-content: flex-start;
+    @media (min-width: 990px) {
+        width: 45%;padding-left:5%;
+    }
+    @media (max-width: 990px) {
+        width: 55%;padding-left:5%;
+    };
+}
+.main__documents-list-item__status {
+    width:25%; display: flex; align-items: center; justify-content: center;
+}
+.main__documents-list-item__date {
+    width: 25%; display: flex; align-items: center; justify-content: center;
+    @media (max-width: 990px) {
+        display: none;
+    };
+}
 .main__documents-list__upload {
     box-sizing: border-box;
     width: 100%;
@@ -261,6 +290,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    text-align: center;
 }
 .main__documents-view__images {
     width: 60%;
@@ -270,7 +300,7 @@ export default {
     justify-content: space-evenly;
 }
 .main__documents-view__images__image {
-    max-height: 40%;
+    max-height: v-bind('imageHeight');
     max-width: 90%;
 }
 .main__documents-view__data {
