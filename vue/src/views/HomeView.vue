@@ -19,11 +19,11 @@
                         </div>
                     </template>
                 </label>
-                <div v-if="file" class="upload_preview-button-container">
-                    <app-button @click="upload">
-                        Загрузить
-                    </app-button>
-                </div>
+            </div>
+            <div v-if="file" class="upload_preview-button-container">
+                <app-button @click="upload">
+                    Загрузить
+                </app-button>
             </div>
 <!--            <label @click.prevent for="upload-photo">-->
 <!--                <div-->
@@ -46,7 +46,7 @@
 <!--                    </template>-->
 <!--                </div>-->
 <!--            </label>-->
-            <input @change="previewFile" ref="upload" type="file" name="photo" id="upload-photo" style="display:none;"/>
+            <input @change="previewFile" ref="upload" type="file" accept=".gif,.jpg,.jpeg,.png" name="photo" id="upload-photo" style="display:none;"/>
 
             <transition-group name="fade" mode="out-in">
                 <div
