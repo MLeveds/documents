@@ -141,6 +141,7 @@ export default {
             }
         },
         upload() {
+            alert('haha')
             let data = new FormData()
             data.append('image', this.file)
             axios.post('/documents', data, {headers: {'Content-Type': 'multipart/form-data'}})
