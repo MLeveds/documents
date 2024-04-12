@@ -25,8 +25,7 @@
                     </template>
                 </div>
             </label>
-<!--            <input @change="previewFile" ref="upload" type="file" accept=".gif,.jpg,.jpeg,.png" name="photo" id="upload-photo" style="display:none;"/>-->
-            <input @change="previewFile" ref="upload" type="file" accept=".gif,.jpg,.jpeg,.png" name="photo" id="upload-photo"/>
+            <input @change="previewFile" ref="upload" type="file" accept=".gif,.jpg,.jpeg,.png" name="photo" id="upload-photo" style="display:none;"/>
 
             <transition-group name="fade" mode="out-in">
                 <div
