@@ -61,19 +61,6 @@ services:
     networks:
       - docs
 
-  redis:
-    image: redis:alpine
-    container_name: docs_redis
-    restart: unless-stopped
-    volumes:
-      - docs-redis-volume:/data
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
-    expose:
-      - 6379
-    command: redis-server /usr/local/etc/redis/redis.conf
-    networks:
-      - docs
-
   certbot:
     image: certbot/certbot
     container_name: docs_certbot
@@ -88,6 +75,4 @@ networks:
 
 volumes:
   docs-pgsql-volume:
-    driver: local
-  docs-redis-volume:
     driver: local
