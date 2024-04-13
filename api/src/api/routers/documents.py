@@ -62,7 +62,7 @@ async def store(
         try:
             filename, extension = storage.save_from_base64(image)
         except Exception as e:
-            return ApiResponse.error('Image must be a valid base64 string.', 400)
+            return ApiResponse.error(str(e), 400)
     return filename + extension
     async with db_manager.get_session() as session:
         file = File(path=filename, extension=extension)
