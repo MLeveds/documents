@@ -13,6 +13,7 @@ class DocumentTransformer(BaseTransformer):
             "id": document.id,
             "type_id": document.type_id,
             "type": document.type.name if document.type else None,
+            "confidence": document.confidence,
             "status_id": document.status_id,
             "status": document.status.name,
             "file_id": document.file_id,
