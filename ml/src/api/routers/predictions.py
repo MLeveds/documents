@@ -43,7 +43,7 @@ async def predict(request: Request):
 @router.post('/detect')
 async def detect(
         request: Request,
-        image: UploadFile = FastapiFile(...)
+        image: UploadFile = FastapiFile(None)
 ):
     json_data = {}
     if not image:
