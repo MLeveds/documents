@@ -8,6 +8,7 @@ class AppConfig(BaseSettings):
     APP_NAME: str
     APP_PATH: str
     APP_URL: str
+    ML_URL: str
     APP_VERSION: str
     DEBUG: bool
 

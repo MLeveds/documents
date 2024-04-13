@@ -1,9 +1,9 @@
-from json import JSONDecodeError
 from typing import List
 
 from fastapi import APIRouter, Request, UploadFile, File as FastapiFile, BackgroundTasks
 from src.api.responses.api_response import ApiResponse
 from src.api.transformers.document_transformer import DocumentTransformer
+from src.config.app.config import settings_app
 
 from src.database.models.document import Document
 from src.database.models.document_status import DocumentStatus
@@ -75,7 +75,7 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
     async def send_to_ml(document: Document):
         async with aiohttp.ClientSession() as client:
             try:
-                async with client.post('http://docs_ml:8000/predict', json={
+                async with client.post(settings_app.ML_URL + '/predict', json={
                     'image_id': document.file_id,
                 }) as response:
                     data = await response.json()
