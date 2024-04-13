@@ -57,7 +57,7 @@ async def store(
             'detail': 'image must be present in form data or in json payload encoded with base64.',
         }, 400)
 
-    return json_data | {'baseimg': image.filename}
+    return json_data | {'baseimg': image.filename if image else 'none'}
 
     filename, extension = storage.save(image)
 
