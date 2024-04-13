@@ -50,23 +50,6 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
         })
 
     filename, extension = storage.save(image)
-    # json_data = {}
-    # if not image:
-    #     try:
-    #         json_data = await request.json()
-    #     except JSONDecodeError:
-    #         pass
-    #
-    #     if 'image' not in json_data and not image:
-    #         return ApiResponse.error('Image must be present in form data or in json payload encoded with base64.', 400)
-    #
-    # if image:
-    #     filename, extension = storage.save(image)
-    # else:
-    #     try:
-    #         filename, extension = storage.save_from_base64(json_data['image'])
-    #     except Exception as e:
-    #         return ApiResponse.error(str(e), 400)
 
     async with db_manager.get_session() as session:
         file = File(path=filename, extension=extension)

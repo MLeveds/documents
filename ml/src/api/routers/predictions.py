@@ -32,12 +32,17 @@ async def predict(request: Request):
     image_path = settings_app.APP_PATH + '/storage/' + file.path + file.extension
 
     """Всякое с предсказаниями..."""
-    response_data = get_prediction(image_path)
+    res = get_prediction(image_path)
 
     """Отредактированную фотку (с выделенными полями) нужно будет сохранить с этим именем"""
     image_edited_path = settings_app.APP_PATH + '/storage/' + file.path + '_edited' + file.extension
 
-    return ApiResponse.payload(response_data)
+    return ApiResponse.payload({
+        'file_type_id': res['file_type_id'],
+        'confidence': res['confidence'],
+        'data': res['data'],
+        'page': res['page'],
+    })
 
 
 @router.post('/detect')
@@ -65,13 +70,19 @@ async def detect(
 
     """Путь к картинке - path"""
     """Всякое с предсказаниями..."""
-    response_data = get_prediction(path)
+    res = get_prediction(path)
 
-    return ApiResponse.payload(response_data)
+    return ApiResponse.payload({
+        'type': DocumentType.to_str(res['file_type_id']),
+        'confidence': res['confidence'],
+        'series': res['data']['series'],
+        'number': res['data']['number'],
+        'page': res['page'],
+    })
 
 
 def get_prediction(image_path: str):
-    return {
+    data = {
         'file_type_id': DocumentType.PASSPORT_RU,  # enum с id типа файла
         'confidence': 0.99,
         'data': {
@@ -79,5 +90,6 @@ def get_prediction(image_path: str):
             'series': '0808',
             'number': '123321',
         },
-        'page': 1,  # Страница документа
+        'page': 1,  # Страница документа nullable
     }
+    return data
