@@ -60,7 +60,7 @@ async def store(
         filename, extension = storage.save(image)
     else:
         try:
-            filename, extension = storage.save_from_base64(image)
+            filename, extension = storage.save_from_base64(json_data['image'])
         except Exception as e:
             return ApiResponse.error(str(e), 400)
     return filename + extension
