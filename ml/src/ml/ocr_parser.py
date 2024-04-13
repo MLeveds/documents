@@ -13,7 +13,7 @@ class Parser:
     def parse_passport(self, image_path):
         image = Image.open(image_path)
         rotated_image = image.transpose(Image.ROTATE_90)
-        result = self.reader.readtext(np.array(rotated_image), allowlist=' 123456789')
+        result = self.reader.readtext(np.array(rotated_image))
         for i in range(len(result) - 2):
             if (
                 len(result[i][1]) == 2
