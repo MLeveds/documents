@@ -45,13 +45,13 @@ async def store(
         queue: BackgroundTasks,
         image: UploadFile = FastapiFile(...)
 ):
-    data = await request.form()
-    json = await request.json()
-    if 'image' not in data:
-        return ApiResponse.errors({
-            'image': ['image is required'],
-        })
+    # data = await request.form()
+    # if 'image' not in data:
+    #     return ApiResponse.errors({
+    #         'image': ['image is required'],
+    #     })
 
+    return image.filename
     filename, extension = storage.save(image)
 
     async with db_manager.get_session() as session:
