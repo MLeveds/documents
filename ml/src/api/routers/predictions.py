@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Request
+from json import JSONDecodeError
+
+from fastapi import APIRouter, Request, UploadFile, File as FastapiFile
 from src.api.responses.api_response import ApiResponse
 
 from src.database.session_manager import db_manager
@@ -7,6 +9,7 @@ from sqlalchemy.future import select
 from src.database.models.file import File
 from src.database.models.document_type import DocumentType
 from src.config.app.config import settings_app
+from src.utils.storage import storage
 
 router = APIRouter()
 
@@ -29,18 +32,52 @@ async def predict(request: Request):
     image_path = settings_app.APP_PATH + '/storage/' + file.path + file.extension
 
     """Всякое с предсказаниями..."""
+    response_data = get_prediction(image_path)
 
     """Отредактированную фотку (с выделенными полями) нужно будет сохранить с этим именем"""
     image_edited_path = settings_app.APP_PATH + '/storage/' + file.path + '_edited' + file.extension
 
-    """"""
-    response_data = {
+    return ApiResponse.payload(response_data)
+
+
+@router.post('/detect')
+async def detect(
+        request: Request,
+        image: UploadFile = FastapiFile(...)
+):
+    json_data = {}
+    if not image:
+        try:
+            json_data = await request.json()
+        except JSONDecodeError:
+            pass
+
+        if 'image' not in json_data and not image:
+            return ApiResponse.error('Image must be present in form data or in json payload encoded with base64.', 400)
+
+    if image:
+        path = storage.save_temp(image)
+    else:
+        try:
+            path = storage.save_temp_from_base64(json_data['image'])
+        except Exception as e:
+            return ApiResponse.error(str(e), 400)
+
+    """Путь к картинке - path"""
+    """Всякое с предсказаниями..."""
+    response_data = get_prediction(path)
+
+    return ApiResponse.payload(response_data)
+
+
+def get_prediction(image_path: str):
+    return {
         'file_type_id': DocumentType.PASSPORT_RU,  # enum с id типа файла
-        'data': {  # поля прочитанные с картинки, произвольные названия, надо будет посмотреть, какие поля вы достаете, я потом у себя их обозначу, чтобы правильно выводиить
+        'confidence': 0.99,
+        'data': {
+            # поля прочитанные с картинки, произвольные названия, надо будет посмотреть, какие поля вы достаете, я потом у себя их обозначу, чтобы правильно выводиить
             'series': '0808',
             'number': '123321',
         },
         'page': 1,  # Страница документа
     }
-
-    return ApiResponse.payload(response_data)

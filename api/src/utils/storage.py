@@ -44,9 +44,9 @@ class Storage:
 
     def get_ext_by_mime(self, mime: str):
         mime_extensions = {
-            "image/jpeg": "jpg",
-            "image/png": "png",
-            "image/gif": "gif",
+            "image/jpeg": ".jpg",
+            "image/png": ".png",
+            "image/gif": ".gif",
         }
 
         if mime in mime_extensions:
