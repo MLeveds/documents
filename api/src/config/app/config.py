@@ -18,9 +18,6 @@ class AppConfig(BaseSettings):
     POSTGRES_NAME: str
     POSTGRES_ECHO: str
 
-    REDIS_PASSWORD: str
-    REDIS_HOST: str
-
     class Config:
         env_file = ".env"
 
