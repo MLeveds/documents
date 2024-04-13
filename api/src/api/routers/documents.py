@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from typing import List
 
 from fastapi import APIRouter, Request, UploadFile, File as FastapiFile, BackgroundTasks
@@ -45,14 +46,19 @@ async def store(
         queue: BackgroundTasks,
         image: UploadFile = FastapiFile(None)
 ):
-
-    if not image:
+    try:
         json_data = await request.json()
-        if 'image' not in json_data:
-            return ApiResponse.error({
-                'detail': 'image must be present in form data or in json payload encoded with base64.',
-            }, 400)
-    return 'good'
+    except JSONDecodeError:
+        json_data = {}
+        pass
+
+    if 'image' not in json_data and not image:
+        return ApiResponse.error({
+            'detail': 'image must be present in form data or in json payload encoded with base64.',
+        }, 400)
+
+    return json_data | {'baseimg': image.filename}
+
     filename, extension = storage.save(image)
 
     async with db_manager.get_session() as session:
