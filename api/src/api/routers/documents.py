@@ -46,18 +46,19 @@ async def store(
         queue: BackgroundTasks,
         image: UploadFile = FastapiFile(None)
 ):
-    try:
-        json_data = await request.json()
-    except JSONDecodeError:
-        json_data = {}
-        pass
+    json_data = {}
+    if not image:
+        try:
+            json_data = await request.json()
+        except JSONDecodeError:
+            pass
 
-    if 'image' not in json_data and not image:
-        return ApiResponse.error({
-            'detail': 'image must be present in form data or in json payload encoded with base64.',
-        }, 400)
+        if 'image' not in json_data and not image:
+            return ApiResponse.error({
+                'detail': 'image must be present in form data or in json payload encoded with base64.',
+            }, 400)
 
-    return json_data | {'baseimg': image.filename if image else 'none'}
+    return json_data if json_data else {'iamge': image.filename}
 
     filename, extension = storage.save(image)
 
