@@ -43,7 +43,7 @@ async def index():
 async def store(
         request: Request,
         queue: BackgroundTasks,
-        image: UploadFile = FastapiFile(...)
+        image: UploadFile = FastapiFile(None)
 ):
     # data = await request.form()
     # if 'image' not in data:
