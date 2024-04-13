@@ -40,9 +40,13 @@ async def index():
 
 
 @router.post("")
-async def store(request: Request, queue: BackgroundTasks, image: UploadFile = FastapiFile(...)):
+async def store(
+        request: Request,
+        queue: BackgroundTasks,
+        image: UploadFile = FastapiFile(...)
+):
     data = await request.form()
-
+    json = await request.json()
     if 'image' not in data:
         return ApiResponse.errors({
             'image': ['image is required'],
