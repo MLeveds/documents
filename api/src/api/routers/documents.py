@@ -85,9 +85,10 @@ async def store(request: Request, queue: BackgroundTasks, image: UploadFile = Fa
                             .filter(Document.id == document.id)\
                             .values(
                             status_id=DocumentStatus.PROCESSED,
-                            data=json.dumps(data['data']) if 'data' in data else None,
-                            type_id=data['file_type_id'] if 'file_type_id' in data else None,
-                            page=data['page'] if 'page' in data else None,
+                            data=json.dumps(data['data']),
+                            type_id=data['file_type_id'],
+                            page=data['page'],
+                            confidence=data['confidence'],
                         )
                         await session.execute(q)
                         await session.commit()

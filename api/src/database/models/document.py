@@ -15,6 +15,7 @@ class Document(Base):
     file_id: Mapped[Optional[int]] = mapped_column(ForeignKey("files.id"), nullable=False)
     status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("document_statuses.id"), nullable=False, default=DocumentStatus.CREATED)
     page: Mapped[Optional[int]] = mapped_column(nullable=True)
+    confidence: Mapped[Optional[float]] = mapped_column(nullable=True)
     data: Mapped[str] = mapped_column(nullable=True)
 
     created_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now())
