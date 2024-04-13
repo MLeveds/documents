@@ -51,7 +51,7 @@ class Storage:
 
         if mime in mime_extensions:
             return mime_extensions[mime]
-        raise Exception('Unknown mime type')
+        raise Exception('Unallowed mime type')
 
 
 storage = Storage()

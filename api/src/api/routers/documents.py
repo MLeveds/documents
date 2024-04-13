@@ -58,10 +58,16 @@ async def store(
                 'detail': 'image must be present in form data or in json payload encoded with base64.',
             }, 400)
 
-    return json_data if json_data else {'iamge': image.filename}
-
-    filename, extension = storage.save(image)
-
+    if image:
+        filename, extension = storage.save(image)
+    else:
+        try:
+            filename, extension = storage.save_from_base64(image)
+        except Exception as e:
+            return ApiResponse.error({
+                'detail': 'Image must be a valid base64 string.',
+            }, 400)
+    return filename + extension
     async with db_manager.get_session() as session:
         file = File(path=filename, extension=extension)
 
