@@ -269,6 +269,8 @@ export default {
 }
 .main__documents-view {
     @media (min-width: 990px) {
+        position: sticky;
+        top: 10px;
         min-width: 60%;
         max-width: 60%;
         margin: 10px 10px 10px 0;
