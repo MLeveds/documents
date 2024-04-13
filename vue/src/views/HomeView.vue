@@ -53,7 +53,7 @@
                 <div class="main__documents-view__data">
                     <span><b>Статус: </b>{{ selectedDocument['status'] }}</span>
                     <span><b>Тип документа: </b>{{ selectedDocument['type'] ?? 'Не определен' }}</span>
-                    <span v-if="selectedDocument['type']"><b>Уверенность: </b>{{ selectedDocument['type'] }}</span>
+                    <span v-if="selectedDocument['confidence']"><b>Уверенность: </b>{{ selectedDocument['confidence'] }}</span>
                     <span><b>Страница: </b>{{ selectedDocument['page'] === null ? 'Не определена' : selectedDocument['page'] }}</span>
                     <span v-if="!selectedDocument['data']"><b>Данные: </b>Не определены</span>
                     <template v-else>
