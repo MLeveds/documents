@@ -83,7 +83,7 @@ async def detect(
 
 def get_prediction(image_path: str):
     data = {
-        'file_type_id': DocumentType.PASSPORT_RU,  # enum с id типа файла
+        'file_type_id': DocumentType.PASSPORT_MAIN,  # enum с id типа файла
         'confidence': 0.99,
         'data': {
             # поля прочитанные с картинки, произвольные названия, надо будет посмотреть, какие поля вы достаете, я потом у себя их обозначу, чтобы правильно выводиить

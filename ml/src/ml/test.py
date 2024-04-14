@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-model = YOLO('bestv8.pt')
+model = YOLO('best.pt')
 
 
 
