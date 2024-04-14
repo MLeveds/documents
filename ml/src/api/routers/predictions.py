@@ -83,14 +83,5 @@ async def detect(
 
 
 def get_prediction(image_path: str):
-    data = {
-        'file_type_id': DocumentType.PASSPORT_MAIN,  # enum с id типа файла
-        'confidence': 0.99,
-        'data': {
-            # поля прочитанные с картинки, произвольные названия, надо будет посмотреть, какие поля вы достаете, я потом у себя их обозначу, чтобы правильно выводиить
-            'series': '0808',
-            'number': '123321',
-        },
-        'page': 1,  # Страница документа nullable
-    }
+    data = model.predict(image_path, confidence_tr=0.45,save_crop=True, save=True, project='test', name='test')
     return data

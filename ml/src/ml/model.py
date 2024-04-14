@@ -1,5 +1,7 @@
 from ultralytics import YOLO
 from typing import Optional
+from src.config.app.config import settings_app
+from src.utils.storage import storage
 import cv2
 
 class Model:
@@ -7,22 +9,39 @@ class Model:
         self.model = YOLO(weights_path)
 
     
-    def predict(self, image_path: str, confidence: float = 0.5, 
+    def predict(self, image_path: str, confidence_tr: float = 0.5, 
                 save_crop: bool = False, save: bool = False, 
                 project: Optional[str] = None, name: Optional[str] = None):
-        data = self.model.predict(source=image_path, conf=confidence, 
+        data = self.model.predict(source=image_path, conf=confidence_tr, 
                                   save_crop=save_crop, save=save, project=project, name=name)
-        data.results.boxes.xyxy
-    
-    def get_prediction(self, image_path: str):
-        crops = self.predict(image_path) # bbox of cropped series and number
-        img = cv2.imread(image_path)
+        confidence_cls = data[0].boxes.cls[0]
+        confidences = data[0].boxes.conf
 
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # Apply Gaussian Blur
-        blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+        highest_confidence = 0
+        class_id = 5
 
-        # Use adaptive thresholding to create a binary image
-        thresholded = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                    cv2.THRESH_BINARY, 13, 9)
+        for i in range(len(confidence_cls)):
+            if confidence_cls[i] != 5:
+                if confidences[i] > highest_confidence:
+                    highest_confidence = confidences[i]
+                    class_id = confidence_cls[i]
+
+        confidence = highest_confidence
+        page = 0
+
+        if class_id == 0 or class_id == 3 or class_id == 6:
+            page = 2
+        elif class_id == 1 or class_id == 2 or class_id == 4 or class_id == 7:
+            page = 1
+        else:
+            page = None
+        
+        crop_path = storage
+
+        return {
+            'file_type_id': class_id,
+            'confidence': confidence,
+            'data': self.get_ocr_(crop_path),
+            'page': page
+        }
         
