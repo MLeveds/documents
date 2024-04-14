@@ -1,8 +1,7 @@
 from ultralytics import YOLO
 from typing import Optional
 from src.config.app.config import settings_app
-from src.utils.storage import storage
-import cv2
+from src.ml.ocr_parser import get_ocr
 
 class Model:
     def __init__(self, weights_path: str):
@@ -11,7 +10,7 @@ class Model:
     
     def predict(self, image_path: str, confidence_tr: float = 0.5, 
                 save_crop: bool = False, save: bool = False, 
-                project: Optional[str] = None, name: Optional[str] = None):
+                project: Optional[str] = settings_app.APP_PATH + '/storage/', name: Optional[str] = 'predicts'):
         data = self.model.predict(source=image_path, conf=confidence_tr, 
                                   save_crop=save_crop, save=save, project=project, name=name)
         confidence_cls = data[0].boxes.cls[0]
@@ -36,12 +35,12 @@ class Model:
         else:
             page = None
         
-        crop_path = storage
+        crops_path = project + 'predicts/crops/series'
 
         return {
             'file_type_id': class_id,
             'confidence': confidence,
-            'data': self.get_ocr_(crop_path),
+            'data': get_ocr(crops_path, class_id),
             'page': page
         }
         

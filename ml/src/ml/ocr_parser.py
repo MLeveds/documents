@@ -1,71 +1,114 @@
-from PIL import Image
-import easyocr
-import numpy as np
 import re
+import os
+import pytesseract
+import cv2
+from src.database.models.document_type import DocumentType
 
 
-class Parser:
-    def __init__(self, is_gpu=False):
-        self.reader = easyocr.Reader(lang_list=['ru'], gpu=is_gpu)
-        self.serial = None
-        self.number = None
+EMPTY_OUTPUT = {'series': '', 'number': ''}
+NUM2SYMB = {
+    7: 'T',
+    1: 'T',
+    4: 'A',
+    6: 'B',
+    8: 'B',
+    0: 'O'
+}
+ENG2RUS = {
+    "A": "А",
+    "B": "В",
+    "C": "С",
+    "E": "Е",
+    "H": "Н",
+    "K": "К",
+    "M": "М",
+    "O": "О",
+    "P": "Р",
+    "T": "Т",
+    "X": "Х",
+    "Y": "У",
+}
 
-    def parse_passport(self, image_path):
-        image = Image.open(image_path)
-        rotated_image = image.transpose(Image.ROTATE_90)
-        result = self.reader.readtext(np.array(rotated_image))
-        for i in range(len(result) - 2):
-            if (
-                len(result[i][1]) == 2
-                and len(result[i+1][1]) == 2
-                and len(result[i+2][1]) == 6
-                and result[i][1].isdigit()
-                and result[i+1][1].isdigit()
-                and result[i+2][1].isdigit()
-            ):
-                self.serial = result[i][1] + result[i+1][1]
-                self.number = int(result[i+2][1])
-        print("Серия:", self.serial)
-        print("Номер:", self.number)
+def get_ocr(crops_path: str, document_class_id: str) -> dict[str, str]:
+    document_type = DocumentType.to_str(document_class_id)
+    directory = os.fsencode(crops_path)
+    for file in os.listdir(directory):
+        parsed_data = parse_ocr(crops_path + '/' + file, document_type)
+        if parsed_data != EMPTY_OUTPUT:
+            return parsed_data
+    return EMPTY_OUTPUT
 
-    def parse_pts(self, image_path):
-        image = Image.open(image_path)
-        result = self.reader.readtext(np.array(image))
-        for i in range(len(result) - 2):
-            if (
-                len(result[i][1]) == 2
-                and len(result[i+1][1]) == 2
-                and len(result[i+2][1]) == 6
-                and result[i][1].isdigit()
-                and result[i+1][1].isalpha()
-                and result[i+2][1].isdigit()
-            ):
-                self.serial = result[i][1] + result[i+1][1]
-                self.number = int(result[i+2][1])
-        print("Серия:", self.serial)
-        print("Номер:", self.number)
+def preprocess_crop(image_path: str):
+    img = cv2.imread(image_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    def parse_sts(self, image_path):
-        image = Image.open(image_path)
-        result = self.reader.readtext(np.array(image))
-        regex_pattern = r"\d{2}\s*\D*\d{2}\s*\D*\d{6}"
-        for detection in result:
-            match = re.match(regex_pattern, detection[1])
-            if match:
-                filtered_string = ''.join([char for char in match.string if char.isdigit()])
-                self.serial = filtered_string[:4]
-                self.number = filtered_string[4:]
-        print("Серия:", self.serial)
-        print("Номер:", self.number)
+    # Apply Gaussian Blur
+    blurred = cv2.GaussianBlur(gray, (3, 3), 0)
 
-    def parse_licence(self, image_path):
-        image = Image.open(image_path)
-        result = self.reader.readtext(np.array(image))
-        for detection in result:
-            filtered_string = ''.join([char for char in detection[1] if char.isdigit()])
-            if len(filtered_string) >= 4 and filtered_string.isdigit():
-                self.serial = filtered_string[:4]
-                self.number = filtered_string[4:]
-                break
-        print("Серия:", self.serial)
-        print("Номер:", self.number)
+    # Use adaptive thresholding to create a binary image
+    thresholded = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                        cv2.THRESH_BINARY, 13, 9)
+
+    
+    return smart_rotate(thresholded)
+
+# TODO: write smart rotate function
+def smart_rotate(image):
+    return image
+
+def parse_ocr(cropped_image_path: str, document_type: str) -> dict[str, str]:
+    image = preprocess_crop(cropped_image_path)
+    raw_text = pytesseract.image_to_string(image, config='-c --tessedit_char_whitelist=0123456789ABCEHKMOPTY')
+    if len(raw_text) < 10:
+        return EMPTY_OUTPUT
+    
+    match document_type:
+        case 'Паспорт':
+            return parse_passport(raw_text)
+        case 'Водительское удостоверение':
+            return parse_driver_license(raw_text)
+        case 'ПТС':
+            return parse_pts(raw_text)
+        case 'СТС':
+            return parse_sts(raw_text)
+        case _:
+            return EMPTY_OUTPUT
+
+
+def parse_passport(raw_text: str) -> dict[str, str]:
+    sernum = ''.join(re.findall(r'\d+', raw_text))
+    if len(raw_text) != 10:
+        return EMPTY_OUTPUT
+    ser = sernum[0:4]
+    num = sernum[4:]
+    return {'series': ser, 'number': num}
+
+
+def parse_driver_license(raw_text: str) -> dict[str, str]:
+    sernum = ''.join(re.findall(r'\d+', raw_text))
+    if len(raw_text) != 10:
+        return EMPTY_OUTPUT
+    ser = sernum[0:4]
+    num = sernum[4:]
+    return {'series': ser, 'number': num}
+
+
+def parse_pts(raw_text: str) -> dict[str, str]:
+    raw_text = ''.join(raw_text.split())
+    if len(raw_text) != 10:
+        return EMPTY_OUTPUT
+    ser1 = raw_text[0:2]
+    ser2 = ''.join(map(lambda x: ENG2RUS[NUM2SYMB.get(x, x)], raw_text[2:4]))
+    num = raw_text[4:]
+    return {'series': ser1 + ser2, 'number': num}
+    
+    
+
+def parse_sts(raw_text: str) -> dict[str, str]:
+    raw_text = ''.join(raw_text.split())
+    if len(raw_text) != 10:
+        return EMPTY_OUTPUT
+    ser1 = raw_text[0:2]
+    ser2 = ''.join(map(lambda x: ENG2RUS[NUM2SYMB.get(x, x)], raw_text[2:4]))
+    num = raw_text[4:]
+    return {'series': ser1 + ser2, 'number': num}
