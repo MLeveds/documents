@@ -84,5 +84,5 @@ async def detect(
 
 
 def get_prediction(image_path: str):
-    data = model.predict(image_path, confidence_tr=0.45,save_crop=True, save=True, project=settings_app.APP_PATH + '/storage', name='predicts')
+    data = model.predict(image_path, confidence_tr=0.45,save_crop=True, save=True, project=settings_app.APP_PATH + '/storage/', name='predicts')
     return data

@@ -2,6 +2,7 @@ from ultralytics import YOLO
 from typing import Optional
 from src.config.app.config import settings_app
 from src.ml.ocr_parser import get_ocr
+import shutil
 
 class Model:
     def __init__(self, weights_path: str):
@@ -36,11 +37,12 @@ class Model:
             page = None
         
         crops_path = project + 'predicts/crops/series'
-
+        parsed_ocr = get_ocr(crops_path, class_id)
+        shutil.rmtree(project + name)
         return {
             'file_type_id': class_id,
             'confidence': confidence,
-            'data': get_ocr(crops_path, class_id),
+            'data': parsed_ocr,
             'page': page
         }
         
