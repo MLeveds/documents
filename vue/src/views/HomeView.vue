@@ -48,7 +48,7 @@
             <template v-if="selectedDocument">
                 <div class="main__documents-view__images">
                     <img class="main__documents-view__images__image" :src="selectedDocument['link']" alt="">
-                    <img v-if="selectedDocument['edited_link']" class="main__documents-view__images__image" :src="selectedDocument['edited_link']" alt="">
+                    <img v-if="selectedDocument['edited_image_path']" class="main__documents-view__images__image" :src="selectedDocument['edited_image_path']" alt="">
                 </div>
                 <div class="main__documents-view__data">
                     <span><b>Статус: </b>{{ selectedDocument['status'] }}</span>

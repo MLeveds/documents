@@ -36,13 +36,14 @@ async def predict(request: Request):
     res = get_prediction(image_path)
 
     """Отредактированную фотку (с выделенными полями) нужно будет сохранить с этим именем"""
-    image_edited_path = settings_app.APP_PATH + '/storage/' + file.path + '_edited' + file.extension
+    image_edited_path = settings_app.APP_PATH + '/storage/predicts/' + file.path + file.extension
 
     return ApiResponse.payload({
         'file_type_id': res['file_type_id'],
         'confidence': res['confidence'],
         'data': res['data'],
         'page': res['page'],
+        'edited_image_path': image_edited_path
     })
 
 
@@ -83,5 +84,5 @@ async def detect(
 
 
 def get_prediction(image_path: str):
-    data = model.predict(image_path, confidence_tr=0.45,save_crop=True, save=True, project='test', name='test')
+    data = model.predict(image_path, confidence_tr=0.45,save_crop=True, save=True, project=settings_app.APP_PATH + '/storage', name='predicts')
     return data
