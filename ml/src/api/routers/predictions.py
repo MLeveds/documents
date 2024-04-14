@@ -10,9 +10,10 @@ from src.database.models.file import File
 from src.database.models.document_type import DocumentType
 from src.config.app.config import settings_app
 from src.utils.storage import storage
+from src.ml.model import YOLOmodel
 
 router = APIRouter()
-
+model = YOLOmodel('../ml/best.pt')
 
 @router.post("/predict")
 async def predict(request: Request):
